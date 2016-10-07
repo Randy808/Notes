@@ -23,14 +23,3 @@ ul{
 }
 
 
-#edit-text{
-border:none;
-background-color:white;
-width:30%;
-resize: none;
-margin-top:20px;
-}
-#edit-text:focus{
-border:none;
-outline: 0;
-}

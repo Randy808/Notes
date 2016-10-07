@@ -1,5 +1,5 @@
 header, main, footer {
-      padding-left: 300px;
+      padding-left: 250px;
     }
 
     @media only screen and (max-width : 992px) {
@@ -7,6 +7,10 @@ header, main, footer {
         padding-left: 0;
       }
     }
+#nav-mobile{
+	width:250px;
+}
+
 	#nav-mobile li.search .search-wrapper i.material-icons {
     position: absolute;
     top: 10px;
@@ -44,6 +48,66 @@ header, main, footer {
 
 .bottom-right{
 	position:absolute;
-	top:80%;
+	bottom:5%;
 	right:5%;
+}
+
+main{
+	height:90%;
+
+}
+
+#edit-text{
+	border:none;
+	background-color:white;
+	width:65%;
+	height:60%;
+	resize: none;
+	margin-top:20px;
+	padding:40px;
+}
+#edit-text:focus{
+	border:none;
+	outline: 0;
+}
+
+.header-small{
+	color:gray;
+	font-size:10px;
+	margin-top:10px;
+	margin-bottom:2px;
+}
+
+.details{
+	margin:0;
+	font-size:14px;
+
+
+}
+
+.title{
+	font-size:20px;
+	margin:0;
+
+}
+
+.chip{
+	margin-top:10px;
+}
+
+.side{
+	width:50px;
+	top:0px;
+	position:absolute;
+	height:100%;
+	left:100%;
+	background-color:red;
+}
+
+.card-panel{
+	margin-left:200px;
+}
+
+#editor-container {
+  height: 375px;
 }
