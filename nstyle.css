@@ -111,3 +111,9 @@ main{
 #editor-container {
   height: 375px;
 }
+
+.search i{
+	position:absolute;
+	width:24px;
+	left:5px;
+}
