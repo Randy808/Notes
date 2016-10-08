@@ -11,14 +11,46 @@
         <link type="text/css" rel="stylesheet" href="lib/materialize/css/materialize.min.css"  media="screen,projection"/>
         <!-- Quilljs -->
         <link href="lib/quill/css/quill.snow.css" rel="stylesheet">
+		<link type="text/css" rel="stylesheet" href="lib/animate/css/animate.css"/>
+
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
+		<script src="js/firebase-config.js"/>
+		<script>
+		  // Initialize Firebase
+		  firebase.initializeApp(config);
+		  var database = firebase.database();
+		</script>
+		<script src="https://www.gstatic.com/firebasejs/ui/live/0.5/firebase-ui-auth.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/live/0.5/firebase-ui-auth.css" />
+    <script type="text/javascript">
+      // FirebaseUI config.
+      var uiConfig = {
+        'signInSuccessUrl': '<url-to-redirect-to-on-success>',
+        'signInOptions': [
+          // Leave the lines as is for the providers you want to offer your users.
+          firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+          firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+          firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+          firebase.auth.GithubAuthProvider.PROVIDER_ID,
+          firebase.auth.EmailAuthProvider.PROVIDER_ID
+        ],
+        // Terms of service url.
+        'tosUrl': '<your-tos-url>',
+      };
+
+      // Initialize the FirebaseUI Widget using Firebase.
+      var ui = new firebaseui.auth.AuthUI(firebase.auth());
+      // The start method will wait until the DOM is loaded.
+      ui.start('#firebaseui-auth-container', uiConfig);
+    </script>
     </head>
     <body>
 
     
 
-			
+
 			<div id="content"></div>
 
             
@@ -31,6 +63,7 @@
                 </div>
                 -->
        
+		
         <script src="jquery-3.1.1.min.js"></script>
         <script type="text/javascript" src="lib/materialize/js/materialize.min.js"></script>
         <script src="lib/slick/slick.js"></script>
@@ -41,7 +74,7 @@
 		<script src="lib/babel/js/browser.min.js"></script>
 
 		 <script type="text/babel">
-		class Record extends React.Component{
+		class Note extends React.Component{
 		
 			constructor(){
 				super();
@@ -54,10 +87,11 @@
 				this.setState({
 					expanded: !this.state.expanded
 				});
+				this.props.setEditing();
 			}
 			render(){
 				return (
-					<div className="card-panel note-thumbnail hoverable" style={ this.state.expanded ? {width:'100%'} : {marginLeft:20} }>
+					<div className="card-panel note-thumbnail hoverable" style={ this.state.expanded ? {width:'100%'} : {marginLeft:0} }>
 						<p className="title truncate">Enumerable methods for quantization of digitized quanta</p>
 						<p className="header-small">Date Created</p>
 						<p className="details truncate">2/12/13,
@@ -82,10 +116,10 @@
 			}
 		}
 		
-		class Nav extends React.Component{
+		class SideNav extends React.Component{
 			render(){
 				return (
-					<ul id="nav-mobile" className="side-nav fixed">
+					<ul id="nav-mobile" className="side-nav fixed z-depth-0" style={{marginTop:65,width:240}}>
 						<li className="search" style={{width:'95%',marginLeft:'auto',marginRight:'auto'}} >
 							<div className="search-wrapper card focused" style={{width:'100%'}} >
 								<input id="search" autoComplete="off" style={{width:'85%',paddingLeft:34, paddingRight:0}}></input><i className="material-icons">search</i>
@@ -118,7 +152,45 @@
 		}
 		
 		class Main extends React.Component{
+			constructor(){
+				super();
+				this.renderNotes = this.renderNotes.bind(this);
+				this.state = {
+					editing: undefined,
+					names: ['a','b','c'],
+					authorized: true
+				};
+			}
+			setEditing(i){
+			
+				if(this.state.editing == i){
+					this.setState({
+						editing:undefined
+					});
+					return;
+				}
+				
+				this.setState({
+					editing:i
+				});
+			}
+			renderNotes(name, index){
+			
+				
+
+				if(this.state.editing == undefined){
+					return <Note key={index} topics="wd" setEditing={this.setEditing.bind(this,index)}/>;
+				}
+				else{
+					if(index == this.state.editing)
+						return <Note key={index} topics="wd" setEditing={this.setEditing.bind(this,index)}/>;
+					return;// <Note key={index} topics="wd" setEditing={this.setEditing.bind(this,index)} className="fadeOut"/>;
+						
+				}
+				
+			}
 			componentDidMount(){
+				this.checkAuthorization();
 				var quill = new Quill('#editor-container', {
 				modules: {
 				toolbar: [
@@ -131,16 +203,60 @@
 				theme: 'snow' // or 'bubble'
 				});
 			}
+			checkAuthorization(){
+				 firebase.auth().onAuthStateChanged(
+					function(user) {
+						if (user) {
+							//console.log("Authenticated.");
+							this.setState({
+								authorized: true
+							});
+						}
+					}.bind(this)
+				).bind(this);
+			}
 			render(){
-				return (
-					<div >
-						<main>
-							<Nav/>
-							<Record topics="React"/>
-							<div id="editor-container"></div>
-						</main>
-					</div>	
-				);
+			
+			//console.log(this.state.authorized);
+				if(this.state.authorized){
+					return (
+						<div >
+							<ul id="dropdown1" className="dropdown-content" style={{marginTop:65}}>
+								<li><a href="#!">one</a></li>
+								<li><a href="#!">two</a></li>
+								<li className="divider"></li>
+								<li><a href="#!">Logout</a></li>
+							</ul>
+							<nav className="z-depth-0">
+								<div className="nav-wrapper">
+									<a href="#!" className="brand-logo">Logo</a>
+									<ul className="right hide-on-med-and-down">
+										<li><a className="dropdown-button" href="#!" data-activates="dropdown1">Dropdown<i className="material-icons right">arrow_drop_down</i></a></li>
+									</ul>
+								</div>
+							</nav>
+							<main style={{height:'500px',overflowY:'scroll'}}>
+								<SideNav/>
+								{
+									this.state.names.map(this.renderNotes)
+								}
+								<div style={{display: this.state.editing != undefined ? 'block' : 'none'}}>
+									<div id="editor-container" ></div>
+								</div>
+							</main>
+						</div>	
+					);
+				}
+				
+				else{
+					return(
+						<div>
+							<h1>Not Signed In</h1>
+								<div id="firebaseui-auth-container"></div>
+						</div>
+
+							);
+				}
 			}
 		}
 		
